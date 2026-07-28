@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Learning System — a plain-language overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121110;
+    --surface:#1a1917;
+    --surface-2:#211f1c;
+    --line:#3a372f;
+    --text:#ece7dc;
+    --text-dim:#a19c8d;
+    --text-faint:#726d60;
+    --ladder:#c98a5a;
+    --ladder-dim:#3a2c1f;
+    --principles:#7d97b8;
+    --principles-dim:#232c35;
+    --relational:#b678a0;
+    --relational-dim:#33222e;
+    --neutral:#8f8a7c;
+    --practice:#8fae8a;
+    --practice-dim:#26302a;
+
+    --serif:'Newsreader', Georgia, serif;
+    --sans:'IBM Plex Sans', -apple-system, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important; scroll-behavior:auto !important;}
+  }
+
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--principles); outline-offset:3px;}
+
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--text-faint);
+  }
+
+  header.top{
+    border-bottom:1px solid var(--line);
+    padding:22px 0;
+    position:sticky; top:0;
+    background:rgba(18,17,16,0.92);
+    backdrop-filter:blur(6px);
+    z-index:20;
+  }
+  header.top .wrap{display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;}
+  .brand{font-family:var(--mono); font-size:13px; letter-spacing:0.03em; color:var(--text-dim);}
+  .brand strong{color:var(--text); font-weight:500;}
+  nav.pagenav{display:flex; gap:18px; flex-wrap:wrap;}
+  nav.pagenav a{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.02em;
+    color:var(--text-faint); text-decoration:none;
+    padding-bottom:2px; border-bottom:1px solid transparent;
+  }
+  nav.pagenav a.current{color:var(--text); border-bottom-color:var(--principles);}
+  nav.pagenav a.disabled{cursor:default; opacity:0.55;}
+
+  section{padding:72px 0;}
+  section.tight{padding:48px 0;}
+  .rule{border:none; border-top:1px solid var(--line); margin:0;}
+
+  h1,h2,h3{font-family:var(--serif); font-weight:500; margin:0;}
+  .hero h1{
+    font-size:44px; line-height:1.2; letter-spacing:-0.01em;
+    max-width:760px;
+  }
+  .hero .lede{
+    margin-top:22px; max-width:620px; color:var(--text-dim);
+    font-size:17px; line-height:1.65;
+  }
+  .hero .eyebrow{margin-bottom:18px;}
+
+  h2.section-title{font-size:26px; margin-bottom:10px;}
+  .section-dek{color:var(--text-dim); max-width:640px; font-size:15px; margin-bottom:36px;}
+
+  /* --- interaction loop + embedding --- */
+  .loop-diagram{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    flex-wrap:wrap; margin:28px 0 10px;
+  }
+  .loop-node{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:16px 20px; text-align:center; min-width:150px;
+  }
+  .loop-node .ln-title{font-family:var(--serif); font-size:16px; margin-bottom:6px;}
+  .loop-node .ln-sub{font-family:var(--mono); font-size:11px; color:var(--text-faint);}
+  .loop-node.conditions{border-top:2px solid var(--practice);}
+  .loop-node.learners{border-top:2px solid var(--practice);}
+  .loop-node.content{border-top:2px solid var(--neutral);}
+  .content-dots{display:flex; gap:5px; justify-content:center; margin-top:8px;}
+  .content-dots span{width:8px; height:8px; border-radius:50%; display:inline-block;}
+  .content-dots .d-ladder{background:var(--ladder);}
+  .content-dots .d-principles{background:var(--principles);}
+  .content-dots .d-relational{background:var(--relational);}
+  .loop-arrow{color:var(--text-faint); font-family:var(--mono); font-size:20px;}
+  .loop-feedback{
+    text-align:center; font-family:var(--mono); font-size:12.5px; color:var(--practice);
+    max-width:520px; margin:14px auto 8px; line-height:1.5;
+  }
+  .loop-feedback .arr{display:block; font-size:15px; margin-bottom:4px;}
+
+  .steps{margin-top:32px; display:flex; flex-direction:column; gap:0;}
+  .step{
+    display:flex; gap:18px; padding:18px 0; border-top:1px dashed var(--line);
+  }
+  .step:last-child{border-bottom:1px dashed var(--line);}
+  .step .s-num{
+    font-family:var(--mono); font-size:13px; color:var(--text-faint);
+    min-width:26px; padding-top:2px;
+  }
+  .step .s-body h4{
+    font-family:var(--sans); font-weight:600; font-size:14.5px; margin:0 0 4px; color:var(--text);
+  }
+  .step .s-body p{font-size:14px; color:var(--text-dim); margin:0; line-height:1.55;}
+
+  .callout{
+    margin-top:32px; padding:16px 20px; background:var(--surface);
+    border:1px solid var(--line); border-left:3px solid var(--ladder); border-radius:8px;
+  }
+  .callout p{margin:0; font-size:14px; color:var(--text-dim); line-height:1.6;}
+  .callout .c-tag{
+    font-family:var(--mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+    color:var(--ladder); margin-bottom:8px; display:block;
+  }
+
+  /* --- shift comparison --- */
+  .shift-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media (max-width:720px){.shift-grid{grid-template-columns:1fr;}}
+  .shift-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:24px 26px;
+  }
+  .shift-card .tag{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase;
+  }
+  .shift-card.old .tag{color:var(--text-faint);}
+  .shift-card.new .tag{color:var(--principles);}
+  .shift-card h3{font-size:18px; margin:10px 0 12px;}
+  .shift-card p{color:var(--text-dim); font-size:14.5px; margin:0 0 10px;}
+  .shift-card .stack{
+    font-family:var(--mono); font-size:12px; color:var(--text-faint);
+    border-left:2px solid var(--line); padding-left:12px; margin-top:14px;
+  }
+  .shift-card .stack div{padding:3px 0;}
+  .shift-card.new .stack{border-left-color:var(--principles);}
+
+  /* --- diagram --- */
+  .diagram{margin-top:44px;}
+  .dg-col{display:flex; flex-direction:column; align-items:center;}
+  .node{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:16px 22px; text-align:center; cursor:pointer;
+    max-width:340px; width:100%;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .node:hover{border-color:var(--text-faint);}
+  .node .n-title{font-family:var(--serif); font-size:17px;}
+  .node .n-sub{font-family:var(--mono); font-size:11.5px; color:var(--text-faint); margin-top:4px;}
+  .connector{width:1px; height:34px; background:var(--line);}
+  .fan{
+    display:flex; justify-content:center; align-items:flex-start; gap:0;
+    position:relative; margin-top:0;
+  }
+  .fan svg{display:block; margin:0 auto;}
+
+  .lanes{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:28px;
+  }
+  @media (max-width:760px){.lanes{grid-template-columns:1fr;}}
+  .lane{
+    border-radius:10px; border:1px solid var(--line); overflow:hidden;
+    background:var(--surface);
+  }
+  .lane .lane-head{
+    padding:18px 20px; cursor:pointer; display:flex; flex-direction:column; gap:4px;
+    border-bottom:1px solid transparent;
+  }
+  .lane[data-open="true"] .lane-head{border-bottom-color:var(--line);}
+  .lane .lane-head .lname{font-family:var(--serif); font-size:18px;}
+  .lane .lane-head .lsub{font-family:var(--mono); font-size:11.5px;}
+  .lane.ladder .lane-head{background:var(--ladder-dim);}
+  .lane.principles .lane-head{background:var(--principles-dim);}
+  .lane.relational .lane-head{background:var(--relational-dim);}
+  .lane.ladder .lsub{color:var(--ladder);}
+  .lane.principles .lsub{color:var(--principles);}
+  .lane.relational .lsub{color:var(--relational);}
+  .lane-body{
+    max-height:0; overflow:hidden; transition:max-height .25s ease;
+  }
+  .lane[data-open="true"] .lane-body{max-height:600px;}
+  .lane-body-inner{padding:16px 20px 20px; font-size:14px; color:var(--text-dim);}
+  .lane-body-inner .lane-commitment{
+    margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);
+    font-size:13.5px; color:var(--text);
+  }
+  .lane-body-inner .lane-commitment b{font-weight:600;}
+  .lane.ladder .lane-commitment b{color:var(--ladder);}
+  .lane.principles .lane-commitment b{color:var(--principles);}
+  .lane.relational .lane-commitment b{color:var(--relational);}
+  .lane-body-inner .returns{
+    margin-top:12px; font-family:var(--mono); font-size:12px; color:var(--text-faint);
+    border-top:1px dashed var(--line); padding-top:10px;
+  }
+  .lane .chevron{transition:transform .2s ease; float:right; color:var(--text-faint); font-family:var(--mono);}
+  .lane[data-open="true"] .chevron{transform:rotate(180deg);}
+
+  /* triage detail */
+  .triage-detail{
+    max-height:0; overflow:hidden; transition:max-height .3s ease;
+    background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
+    margin:14px auto 0; max-width:620px;
+  }
+  .triage-detail[data-open="true"]{max-height:600px;}
+  .triage-detail-inner{padding:18px 22px;}
+  .triage-detail-inner p{font-size:13.5px; color:var(--text-dim); margin:0 0 14px;}
+  table.tlog{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px;}
+  table.tlog th{text-align:left; color:var(--text-faint); font-weight:400; padding:6px 8px; border-bottom:1px solid var(--line);}
+  table.tlog td{padding:8px; border-bottom:1px solid var(--line); color:var(--text-dim); vertical-align:top;}
+  table.tlog td.routed-ladder{color:var(--ladder);}
+  table.tlog td.routed-principles{color:var(--principles);}
+  table.tlog td.routed-relational{color:var(--relational);}
+  .contest-btn{
+    font-family:var(--mono); font-size:11px; color:var(--text-faint);
+    border:1px solid var(--line); background:none; border-radius:6px;
+    padding:3px 8px; cursor:pointer;
+  }
+  .contest-btn:hover{color:var(--text); border-color:var(--text-faint);}
+  .fictional{font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:10px;}
+
+  /* --- deep codes --- */
+  .reg-label{
+    display:inline-block; font-family:var(--serif); font-weight:500;
+    font-size:40px; line-height:1.15; letter-spacing:-0.01em;
+    color:var(--text); border:none; border-bottom:3px solid var(--neutral);
+    border-radius:0; padding:0 0 12px; margin-bottom:24px;
+  }
+  .reg-label.content{border-bottom-color:var(--neutral);}
+  .reg-label.practice{border-bottom-color:var(--practice);}
+  @media (max-width:600px){.reg-label{font-size:30px;}}
+  .practice-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px;}
+  @media (max-width:720px){.practice-grid{grid-template-columns:1fr;}}
+  .practice-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:20px 22px; border-top:2px solid var(--practice);
+  }
+  .practice-card .p-name{
+    font-family:var(--serif); font-size:18px; margin-bottom:4px; color:var(--text);
+  }
+  .practice-card .p-sub{
+    font-family:var(--mono); font-size:12px; color:var(--practice); margin-bottom:14px;
+  }
+  .practice-card p{font-size:14px; color:var(--text-dim); margin:0 0 10px; line-height:1.55;}
+  .practice-card .p-note{
+    margin-top:12px; padding-top:10px; border-top:1px dashed var(--line);
+    font-family:var(--mono); font-size:12px; color:var(--text-faint);
+  }
+  .dc-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:720px){.dc-grid{grid-template-columns:1fr;}}
+  .dc-card{
+    border:1px solid var(--line); border-radius:10px; padding:18px 20px; background:var(--surface);
+  }
+  .dc-card .dc-name{font-family:var(--serif); font-size:16.5px; margin-bottom:6px;}
+  .dc-card .dc-orig{font-size:13.5px; color:var(--text-dim); margin:0 0 10px;}
+  .dc-card .dc-map{
+    font-family:var(--mono); font-size:11.5px; color:var(--principles);
+    border-top:1px dashed var(--line); padding-top:9px;
+  }
+
+  /* --- open questions --- */
+  .open-list{display:grid; gap:12px;}
+  .open-item{
+    display:grid; grid-template-columns:22px 1fr; gap:12px;
+    border:1px dashed var(--line); border-radius:8px; padding:14px 16px;
+    background:var(--surface);
+  }
+  .open-item .mark{font-family:var(--mono); color:var(--text-faint); font-size:13px;}
+  .open-item p{margin:0; font-size:14px; color:var(--text-dim);}
+  .open-item strong{color:var(--text); font-weight:500;}
+
+  footer{
+    border-top:1px solid var(--line); padding:44px 0 60px;
+  }
+  .next-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:18px;
+  }
+  .next-card{
+    border:1px dashed var(--line); border-radius:8px; padding:12px 14px;
+    font-family:var(--mono); font-size:12px; color:var(--text-faint);
+  }
+  .provenance{margin-top:36px; font-family:var(--mono); font-size:11.5px; color:var(--text-faint);}
+
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><strong>Learning System</strong> — plain-language overview</div>
+    <nav class="pagenav">
+      <a href="#" class="current">Overview</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Overview — plain-language draft — v0.2</div>
+    <h1>Three ways to hold what we learn, and two questions that keep the whole thing honest.</h1>
+    <p class="lede">When something worth learning comes up, it gets handled in one of three ways: a step-by-step ladder for testing claims, a check against our shared values, or a practice built to protect things people aren't ready to put into words. A simple sorting step — not a manager, not a committee — decides which one fits. But none of those three tell us whether people are actually getting better at learning, or whether people feel safe enough to speak up honestly before they're forced to tidy their thinking into something official. This idea is our attempt to cover both sides: what we hold onto, and what makes it safe to hold.</p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section class="tight">
+  <div class="wrap">
+    <div class="eyebrow" style="margin-bottom:10px;">What changed</div>
+    <h2 class="section-title">Why not one system with add-ons</h2>
+    <p class="section-dek">We previously sent material and early stage thinking that we could create a "base model" and attach modules to it. An add-on is never really equal to the main thing it's attached to, no matter how carefully it's designed. Treating refusal, silence, or gut feeling as optional extras quietly decided, before anyone got a say, that they mattered less than the main system. This is a change to how we handle <i>content</i> specifically — claims, values, and boundaries. A separate piece — how people grow as learners, and what conditions help them speak up honestly — didn't exist in either version. That's covered further down the page.</p>
+    <div class="shift-grid">
+      <div class="shift-card old">
+        <div class="tag">The old design</div>
+        <h3>One system, with add-ons</h3>
+        <p>One main ladder. Everything else — onboarding, blockers, legal work, refusal — attached to it as an optional extra.</p>
+        <div class="stack">
+          <div>knowledge ladder — the main system</div>
+          <div>├─ 3D goaling — add-on</div>
+          <div>├─ human onboarding — add-on</div>
+          <div>├─ system blockers — add-on</div>
+          <div>├─ legal architecture — add-on</div>
+          <div>└─ "disrupt" — a type of add-on, never actually built</div>
+        </div>
+      </div>
+      <div class="shift-card new">
+        <div class="tag">The new design</div>
+        <h3>Three equal approaches, sorted as they arrive</h3>
+        <p>Three approaches now sit side by side as equals. A simple sorting step decides which one fits a new piece of information — none of the three outranks the others. But content isn't the whole story: the conditions around the team come first, and what people learn along the way feeds back into those conditions.</p>
+        <div class="stack">
+          <div style="color:var(--practice);">conditions — feeling safe, having spare time, regular pauses, many viewpoints</div>
+          <div>&nbsp;&nbsp;&nbsp;↓</div>
+          <div>something worth learning comes up</div>
+          <div>└─ sorted — written down, open to challenge</div>
+          <div>&nbsp;&nbsp;&nbsp;├─ knowledge ladder</div>
+          <div>&nbsp;&nbsp;&nbsp;├─ values check</div>
+          <div>&nbsp;&nbsp;&nbsp;└─ relational practice</div>
+          <div>&nbsp;&nbsp;&nbsp;↓</div>
+          <div style="color:var(--practice);">learners — how people are growing ↺ feeds back into conditions</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="wrap">
+    <div class="reg-label content">Learning as Content</div>
+    <h2 class="section-title">Click through what happens, step by step</h2>
+    <p class="section-dek">Click any box to open it. The sorting step opens up to show how routing decisions get made and checked. Each practice opens up to show how it actually works, and whether anything comes back afterwards.</p>
+
+    <div class="diagram">
+      <div class="dg-col">
+        <div class="node" id="signal-node" onclick="toggleTriage()">
+          <div class="n-title">Something comes up</div>
+          <div class="n-sub">a problem, a hunch, a boundary someone names</div>
+        </div>
+        <div class="connector"></div>
+        <div class="node" id="triage-node" onclick="toggleTriage()">
+          <div class="n-title">Sorting</div>
+          <div class="n-sub">chosen by whoever holds it — written down — open to challenge</div>
+        </div>
+
+        <div class="triage-detail" id="triage-detail">
+          <div class="triage-detail-inner">
+            <p>There's no single gatekeeper making this decision for everyone. Whoever holds the information chooses where it goes, right away, at no cost to them. What keeps this honest: every choice is written down straight away, for anyone to see, and anyone working in a different practice can challenge a routing decision — someone else just takes a fresh, independent look at it.</p>
+            <table class="tlog">
+              <tr><th>what came up</th><th>sent to</th><th>why</th><th></th></tr>
+              <tr><td>cooling pilot — worry about the water table</td><td class="routed-ladder">ladder</td><td>can be tested and proven wrong</td><td><button class="contest-btn" onclick="alert('Example only — in real use, this would ask someone from a different practice to take a fresh look.')">challenge this</button></td></tr>
+              <tr><td>community doesn't want to name the displacement risk publicly</td><td class="routed-relational">relational</td><td>held privately, not written up</td><td><button class="contest-btn" onclick="alert('Example only — in real use, this would ask someone from a different practice to take a fresh look.')">challenge this</button></td></tr>
+              <tr><td>a claim moved forward without checking in with people first</td><td class="routed-principles">values check</td><td>a values concern was raised</td><td><button class="contest-btn" onclick="alert('Example only — in real use, this would ask someone from a different practice to take a fresh look.')">challenge this</button></td></tr>
+            </table>
+            <div class="fictional">example entries — not real data</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="fan">
+        <svg width="100%" viewBox="0 0 680 70" style="max-width:520px; margin-top:6px;">
+          <line x1="340" y1="0" x2="90" y2="60" stroke="#3a372f" stroke-width="1"/>
+          <line x1="340" y1="0" x2="340" y2="60" stroke="#3a372f" stroke-width="1"/>
+          <line x1="340" y1="0" x2="590" y2="60" stroke="#3a372f" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <p class="section-dek" style="margin-top:0; margin-bottom:18px;">Having three practices instead of one makes room for every kind of knowledge a team produces — not just the kind that can be tested and proven. Each practice represents a different kind of commitment, and each one is open for others to see and question.</p>
+
+      <div class="lanes">
+        <div class="lane ladder" data-open="false" id="lane-ladder">
+          <div class="lane-head" onclick="toggleLane('lane-ladder')">
+            <span class="chevron">⌄</span>
+            <span class="lname">Knowledge ladder</span>
+            <span class="lsub">a guess → a firm, tested commitment</span>
+          </div>
+          <div class="lane-body">
+            <div class="lane-body-inner">
+              Five steps, checked more carefully as the stakes go up: guess → hunch → educated guess → tested claim → solid, well-tested claim. Only a solid claim can justify spending real time or money on something. Everything learned along the way stays on record, so any action taken can always be traced back to what justified it.
+              <p class="lane-commitment">The ladder makes it clear and official when a belief has <b>earned the right to be acted on</b> — from a first guess through to a well-tested claim.</p>
+              <div class="returns">↻ what's learned feeds back in as a new, better-informed starting point<br>→ we still haven't worked out how to properly credit whoever first raised it — see the open questions</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lane principles" data-open="false" id="lane-principles">
+          <div class="lane-head" onclick="toggleLane('lane-principles')">
+            <span class="chevron">⌄</span>
+            <span class="lname">Principles fidelity</span>
+            <span class="lsub">no steps, no ranking</span>
+          </div>
+          <div class="lane-body">
+            <div class="lane-body-inner">
+              A small, steady set of principles that the whole team is accountable to, checked all the time against what's actually happening — not "is this claim proven," but "are we still doing what we said we'd do." This check can send any piece of work — even something already on the ladder — back to sorting if something doesn't add up.
+              <p class="lane-commitment">This practice makes it clear <b>whether we're keeping our word</b> — not just at the end of a project, but continuously, all the way through.</p>
+              <div class="returns">↻ can send things back to sorting at any time<br>never escalates, and never produces a commitment of its own</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lane relational" data-open="false" id="lane-relational">
+          <div class="lane-head" onclick="toggleLane('lane-relational')">
+            <span class="chevron">⌄</span>
+            <span class="lname">Relational practice</span>
+            <span class="lsub">paying close attention, protecting the right to say no</span>
+          </div>
+          <div class="lane-body">
+            <div class="lane-body-inner">
+              This is about paying close attention rather than jumping to conclusions. Staying silent, leaving something unsaid, or refusing to fully explain something are all treated as valid outcomes here — not as a failure to make progress. Nothing here has to feed into the ladder. The only way something moves into a different practice is if the person holding it agrees to it.
+              <p class="lane-commitment">This practice makes it fully acceptable <b>to say no</b> — a boundary, once set, is protected and recognised, not something someone has to do quietly because there's nowhere else for it to go.</p>
+              <div class="returns">nothing is forced back into the system — it stays held, or refused, entirely on the person's own terms</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="wrap">
+    <div class="reg-label practice">Learning as Practice</div>
+    <h2 class="section-title">There's more to learning than what we know</h2>
+    <p class="section-dek">The three practices above all deal with content — a claim, a value, or a boundary. None of them tell us whether the people involved are actually getting better at learning, or whether the right conditions exist for someone to speak up honestly before they feel forced to package it neatly. These aren't a fourth practice, and they don't produce any kind of formal commitment. They're ongoing questions that the whole system has to keep answering, across all three practices.</p>
+
+    <div class="practice-grid">
+      <div class="practice-card">
+        <div class="p-name">What kind of learners are we becoming</div>
+        <div class="p-sub">learning how to learn, not just learning facts</div>
+        <p>The ladder tracks how well-tested a claim is. It has no way of tracking whether the <i>person</i> raising claims is changing — for example, whether someone who used to push every hunch straight to the ladder now sends it to the relational practice instead, without being told to, or becomes more willing to raise an uncomfortable hunch in the first place.</p>
+        <p>There's a useful difference between learning to do something better, and learning whether you're even asking the right kind of question in the first place. The fact that sorting decisions get written down and can be challenged is already a small example of that second, deeper kind of learning — questioning the system's own habits, not just its results. It's worth asking whether that kind of self-questioning should be something we can actually see and track in people, not only in the written record.</p>
+        <div class="p-note">a change in how someone behaves, not just what's written down</div>
+      </div>
+      <div class="practice-card">
+        <div class="p-name">The conditions for learning to happen at all</div>
+        <div class="p-sub">feeling safe · having spare time · regular pauses · many viewpoints</div>
+        <p>This comes back to something raised earlier: telling the truth about what isn't working has to cost people nothing real, or the whole idea of letting people sort their own information falls apart. Research on psychological safety backs this up directly — teams speak up more when doing so isn't held against them.</p>
+        <p>Feeling safe isn't the whole picture, though. Having <b>spare time and attention</b> matters too, so people can notice a weak signal before they're forced to tidy it into something official. So do <b>regular moments set aside just for noticing things</b>, not tied to a deadline or a decision. And so does having <b>more than one point of view in the room</b> — several partial perspectives tend to beat one confident, single view, which is exactly what happened when three separate outside reviewers, working independently, landed on the same core criticism of this whole design.</p>
+        <div class="p-note">the groundwork the whole system depends on — not a fourth practice</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow" style="margin-bottom:10px;">How the pieces move</div>
+    <h2 class="section-title">How these fit together, and how you'd bring this into a team</h2>
+    <p class="section-dek">Conditions and content aren't equals. Conditions come first — they decide whether something worth learning ever gets raised honestly at all. Content is the visible, day-to-day middle. Learners is the knock-on effect: practising this well, over time, changes people, and those changed people go on to protect and strengthen the very conditions that made honest practice possible in the first place.</p>
+
+    <div class="loop-diagram">
+      <div class="loop-node conditions">
+        <div class="ln-title">Conditions</div>
+        <div class="ln-sub">feeling safe · spare time · regular pauses · many viewpoints</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-node content">
+        <div class="ln-title">Content</div>
+        <div class="ln-sub">something comes up → sorting → three practices</div>
+        <div class="content-dots">
+          <span class="d-ladder"></span><span class="d-principles"></span><span class="d-relational"></span>
+        </div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-node learners">
+        <div class="ln-title">Learners</div>
+        <div class="ln-sub">how people are growing</div>
+      </div>
+    </div>
+    <div class="loop-feedback"><span class="arr">↺</span>people who've grown go on to protect and strengthen the conditions that helped them grow — it's a loop, not a one-way pipeline</div>
+
+    <p class="section-dek" style="margin-top:36px; margin-bottom:0;">A rough order for bringing this into a team or organisation — each step assumes the ones before it are real, not just announced:</p>
+    <div class="steps">
+      <div class="step">
+        <div class="s-num">01</div>
+        <div class="s-body">
+          <h4>Check the conditions before touching anything else</h4>
+          <p>Before introducing a ladder or any practice: has raising an inconvenient finding ever actually cost someone here their standing? Does anyone have time in their week that isn't tied to a deadline? Do decisions draw on more than one point of view, or mainly one confident voice?</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="s-num">02</div>
+        <div class="s-body">
+          <h4>Make any governance changes real, not just declared</h4>
+          <p>Clear decision-making rights, real budget for the two practices that won't produce neat, fundable-looking outputs, and a genuine commitment that telling the truth won't be punished — tested by whether it actually holds the first time someone puts it to the test, not by the statement alone.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="s-num">03</div>
+        <div class="s-body">
+          <h4>Try it with one small team first, not the whole organisation</h4>
+          <p>The basic loop — something comes up → sorting → three practices — works the same way at any size. One team doing it properly is a better, more honest test than a half-hearted launch across the whole organisation at once.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="s-num">04</div>
+        <div class="s-body">
+          <h4>Treat "learners" as a light, protected habit — not something you measure</h4>
+          <p>A regular space where people notice, together, how their own thinking is shifting. The moment this turns into a tracked, reviewed measure, it becomes exactly the kind of box-ticking this whole approach is trying to avoid. It should feel more like the values check — ongoing and low-key — than like the ladder.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="s-num">05</div>
+        <div class="s-body">
+          <h4>Only then make the content side official</h4>
+          <p>The written sorting log, the right to challenge a decision, the three practices themselves — by this point, people have real reason to trust that using the values check or the relational practice costs them nothing.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="s-num">06</div>
+        <div class="s-body">
+          <h4>Pay closest attention to fairness-checking and credit-giving</h4>
+          <p>These are the two places where conditions and content actually meet in practice — checking whether some people are being routed differently because of existing power or lack of spare time, using what the sorting log actually shows.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="s-num">07</div>
+        <div class="s-body">
+          <h4>Apply this approach to its own rollout</h4>
+          <p>Pushback, an unused practice, or people quietly slipping back into old habits while this is being introduced is itself something worth learning from — sort it the same way you'd sort anything else, rather than treating the rollout as separate from the thing being rolled out.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="c-tag">How this goes wrong</span>
+      <p>Introducing the content side and the learners side without first getting the conditions right repeats a mistake that's easy to make: building the safety net second, if at all. A full three-practice system with weak conditions underneath doesn't fail with a bang — it just quietly drifts back toward whichever practice feels safest, which in practice usually means everyone defaults back to the ladder, and the other two practices become vocabulary nobody actually uses.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow" style="margin-bottom:10px;">Where this builds on earlier work</div>
+    <h2 class="section-title">This isn't a new discovery</h2>
+    <p class="section-dek">None of this came out of nowhere. Eight "deep codes" from an earlier field guide named most of these same tensions before the knowledge ladder even existed. Two of them — Holistic view and Mindful endings — were quietly lost along the way when the ladder was first built, without anyone actually deciding to drop them.</p>
+
+    <div class="dc-grid">
+      <div class="dc-card">
+        <div class="dc-name">Unfurling</div>
+        <p class="dc-orig">The shape of the work reveals itself over time — it isn't fixed at the start.</p>
+        <div class="dc-map">→ the ladder can revise what "done" means, and loops back on itself</div>
+      </div>
+      <div class="dc-card">
+        <div class="dc-name">Balanced power</div>
+        <p class="dc-orig">Authority shouldn't depend on who has the most wealth, seniority, or reputation.</p>
+        <div class="dc-map">→ people sort their own information · scrutiny scales with the stakes, not with rank</div>
+      </div>
+      <div class="dc-card">
+        <div class="dc-name">Holistic view</div>
+        <p class="dc-orig">What matters includes relationships, care, and craft — not just what's easy to measure.</p>
+        <div class="dc-map">→ the ladder's own admitted blind spot around unspoken knowledge · the reason the relational practice exists</div>
+      </div>
+      <div class="dc-card">
+        <div class="dc-name">Mindful endings</div>
+        <p class="dc-orig">People should be able to step back responsibly, without stalling the group's mission.</p>
+        <div class="dc-map">→ saying no is treated as a legitimate outcome, not a failure to make progress</div>
+      </div>
+      <div class="dc-card">
+        <div class="dc-name">Mission led</div>
+        <p class="dc-orig">Being accountable to the shared mission matters more than individual interest.</p>
+        <div class="dc-map">→ what counts as "done" · credibility is earned through the work itself, not through position</div>
+      </div>
+      <div class="dc-card">
+        <div class="dc-name">Risk mitigation</div>
+        <p class="dc-orig">Reducing the chance and impact of things going wrong, for everyone involved.</p>
+        <div class="dc-map">→ tracking real-world risk alongside the ladder as it develops</div>
+      </div>
+      <div class="dc-card">
+        <div class="dc-name">Risk ownership</div>
+        <p class="dc-orig">Financial and relational risk should be shared visibly and fairly.</p>
+        <div class="dc-map">→ the bigger question of properly crediting whoever first raised something</div>
+      </div>
+      <div class="dc-card">
+        <div class="dc-name">Proportionate</div>
+        <p class="dc-orig">How closely something is checked should scale with context and complexity — not be fixed in advance.</p>
+        <div class="dc-map">→ scrutiny that scales with the stakes · the whole argument against one-system-with-add-ons</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow" style="margin-bottom:10px;">Being honest about this</div>
+    <h2 class="section-title">What we haven't solved yet</h2>
+    <p class="section-dek">Naming these plainly rather than glossing over them — this is still closer to a working idea than a finished, tested design.</p>
+    <div class="open-list">
+      <div class="open-item">
+        <div class="mark">01</div>
+        <p><strong>Letting people sort their own information is only as safe as reward structures nobody has actually designed yet.</strong> Someone in a precarious position, or answerable to a funder, may not experience "just hold this quietly" as a real option, even when it's technically allowed. We've named what would need to be true — people feeling safe, having spare time, regular pauses, many viewpoints — but not yet worked out how an organisation actually builds those things.</p>
+      </div>
+      <div class="open-item">
+        <div class="mark">02</div>
+        <p><strong>The ladder still doesn't fit messy, tangled problems well.</strong> Making it one of three practices stops it pretending to be the whole answer — but it doesn't fix the deeper mismatch between "prove it with a clean test" thinking and problems where cause and effect aren't straightforward.</p>
+      </div>
+      <div class="open-item">
+        <div class="mark">03</div>
+        <p><strong>We have a principle for giving credit back, but no actual mechanism.</strong> What should actually go back to whoever first raised something — credit, resources, a say in what happens next — hasn't been designed.</p>
+      </div>
+      <div class="open-item">
+        <div class="mark">04</div>
+        <p><strong>Not having enough qualified reviewers is still the bottleneck.</strong> Sorting things more carefully doesn't create more people qualified to review a claim at the top of the ladder.</p>
+      </div>
+      <div class="open-item">
+        <div class="mark">05</div>
+        <p><strong>"Learners" and "conditions" have been named, but not actually built.</strong> Same gap as the credit problem above, one level up: there's no real way yet to check how healthy the conditions are, or to notice how someone's thinking is shifting, except informally. Describing the idea isn't the same as building it.</p>
+      </div>
+      <div class="open-item">
+        <div class="mark">06</div>
+        <p><strong>The suggested order assumes a pause that most organisations can't actually take.</strong> "Fix the conditions before touching anything else" is the honest order to follow — but most teams are already mid-project, already answerable to funders expecting ladder-shaped results on a schedule. What to do when that pause simply isn't available is still an open question, and that's probably the normal case, not the exception.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="eyebrow">Still being built, one piece at a time</div>
+    <div class="next-grid">
+      <div class="next-card">Sorting — in depth<br>next</div>
+      <div class="next-card">Knowledge ladder — full detail</div>
+      <div class="next-card">Principles fidelity — full detail</div>
+      <div class="next-card">Relational practice — full detail</div>
+      <div class="next-card">Deep codes — full comparison</div>
+      <div class="next-card">Learners — in depth</div>
+      <div class="next-card">Conditions — in depth</div>
+    </div>
+    <div class="provenance">plain-language draft, v0.2 · adapted from an internal working note for readers outside the project · still a work in progress, not a finished or final version</div>
+  </div>
+</footer>
+
+<script>
+  function toggleLane(id){
+    document.querySelectorAll('.lane').forEach(function(lane){
+      if(lane.id === id){
+        var open = lane.getAttribute('data-open') === 'true';
+        lane.setAttribute('data-open', open ? 'false' : 'true');
+      }
+    });
+  }
+  function toggleTriage(){
+    var el = document.getElementById('triage-detail');
+    var open = el.getAttribute('data-open') === 'true';
+    el.setAttribute('data-open', open ? 'false' : 'true');
+  }
+</script>
+
+</body>
+</html>
